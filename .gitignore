@@ -1,0 +1,25 @@
+# data and model weights
+ml/data/*
+!ml/data/.gitkeep
+*.pt
+*.h5
+*.ckpt
+
+# python
+__pycache__/
+.venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# node
+node_modules/
+dist/
+
+# secrets
+.env
+kaggle.json
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
