@@ -1,0 +1,9 @@
+To run this you need to create a virtual environment and install openCV and mediaPipe:
+
+'''
+python -m venv .venv
+
+source .venv/bin/activate
+
+pip install opencv-python mediapipe
+'''
