@@ -104,12 +104,6 @@ def handDetection():
         if (key == ord("q")): 
             break
 
-        if (key == ord("p") and normalized_vector is not None):
-            print(normalized_vector.shape)
-            print("wrist:", np.round(normalized_vector[0:3], 3))
-            print("middle knuckle:", np.round(normalized_vector[27:30], 3))
-            print("index tip:", np.round(normalized_vector[24:27], 3))
-
     # cleanup
     cap.release()
     cv2.destroyAllWindows()
