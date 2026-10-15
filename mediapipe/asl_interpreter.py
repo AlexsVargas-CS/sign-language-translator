@@ -47,14 +47,65 @@ def normalizeLandmarks(hand):
     distance = np.linalg.norm(points[9])
     points = points / distance
 
-    # convert into single dimension array w/ 63 points
+    # convert into single dimension array w/ 63 points (the feature vector part)
     points = points.flatten()
     return points
 
+def handDetectionStatic(): 
+    # path to an image
+    image_path = "/home/kevingrant18/Documents/Cal_Poly/CSC4880/ASL_Alphabet/B_test.jpg"
+
+    # describe how we want the hand detector configured
+    options = vision.HandLandmarkerOptions(
+        # hand_landmarker.task is a file in this directory that contains the neural networks to find the hands and its landmarks
+        base_options = mp_python.BaseOptions(model_asset_path = "hand_landmarker.task"),
+        running_mode = vision.RunningMode.IMAGE,
+        num_hands = 1
+    )
+   
+    # loads the model
+    landmarker = vision.HandLandmarker.create_from_options(options)
+
+    # read the image
+    image = cv2.imread(image_path)
+    if image is None:
+        print(f"Could not read image {image_path}")
+
+    # add padding
+    # image = cv2.copyMakeBorder(image, 100, 100, 100, 100, cv2.BORDER_CONSTANT, value=(0,0,0))
+
+
+    # convert to rgb from gbr
+    rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    # puts into MediaPipe object
+    mp_image = mp.Image(image_format = mp.ImageFormat.SRGB, data = rgb)
+
+    # runs the neural network on the image
+    result = landmarker.detect(mp_image) 
+    
+    # read the results
+    if result.hand_landmarks: 
+        hand = result.hand_landmarks[0]
+        features = normalizeLandmarks(hand)
+        drawHand(image, hand)
+    else:
+        print("No hand detected")
+
+    cv2.imshow("Result", image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    landmarker.close()
 
 
 
-def handDetection(): 
+
+
+
+def handDetectionLive(): 
+    # path to an image
+    image_path = "/home/kevingrant18/Documents/Cal_Poly/CSC4880/A_test.jpg"
+
     # describe how we want the hand detector configured
     options = vision.HandLandmarkerOptions(
         # hand_landmarker.task is a file in this directory that contains the neural networks to find the hands and its landmarks
@@ -104,10 +155,16 @@ def handDetection():
         if (key == ord("q")): 
             break
 
+        if (key == ord("p") and normalized_vector is not None):
+            print(normalized_vector.shape)
+            print("wrist:", np.round(normalized_vector[0:3], 3))
+            print("middle knuckle:", np.round(normalized_vector[27:30], 3))
+            print("index tip:", np.round(normalized_vector[24:27], 3))
+
     # cleanup
     cap.release()
     cv2.destroyAllWindows()
     landmarker.close()
 
 if __name__ == "__main__": 
-    handDetection()
+    handDetectionStatic()
